@@ -1,0 +1,83 @@
+// const nodemailer = require("nodemailer")
+
+// let email = "eduarda.dejesussilva20@gmail.com"
+
+// let transporter = nodemailer.createTransport({
+//     host: "smtp.gmail.com",
+//     port: 465,
+//     secure: true ,
+//     auth:{
+//         user: "mesaplus.oficial@gmail.com",
+//         pass: "jtxu zchr mbzm mwup"
+//     }
+// })
+
+// transporter.sendMail({
+//     from: "Mesa Plus <mesaplus.oficial@gmail.com>",
+//     to: "eduarda.dejesussilva20@gmail.com",
+//     subject: "Recuperar senha",
+//     text: "Este é um email que não precisa ser respondido. Segue código de verificação para recuperar senha"
+// }).then(message =>{
+//     console.log(message);
+// }).catch(err => {
+//     console.log(err);
+// })
+
+
+const nodemailer = require("nodemailer");
+const crypto = require("crypto");
+const { networkInterfaces } = require("os");
+
+
+function gerarCodigoSeguro() {
+   
+    return crypto.randomBytes(16).toString('hex');
+}
+
+
+let transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+        user: "mesaplus.oficial@gmail.com",
+        pass: "jtxu zchr mbzm mwup"
+    }
+});
+
+
+async function enviarEmailRecuperacao(destinatarioEmail) {
+    
+   
+    const codigo = gerarCodigoSeguro(); 
+    
+    // ATENÇÃO: É essencial salvar este 'codigo' no seu banco de dados, 
+    // junto com um timestamp de expiração (ex: 15 minutos), para validação posterior.
+    // Ex: await salvarCodigoNoBanco(destinatarioEmail, codigo);
+
+    console.log(`Gerando código seguro para: ${destinatarioEmail}`);
+
+    try {
+        let info = await transporter.sendMail({
+            from: "Mesa Plus <mesaplus.oficial@gmail.com>",
+            to: destinatarioEmail,
+            subject: "Recuperação de Senha - Código de Verificação",
+         
+            text: `Este é um email que não precisa ser respondido. Segue código de verificação para recuperar senha.`,
+            html: `
+                <p>Olá!</p>
+                <p>Seu código de verificação para redefinição de senha é:</p>
+                <h2 style="color: #007bff; background-color: #f0f0f0; padding: 10px; border-radius: 5px; text-align: center;">${codigo}</h2>
+                <p><strong>Por motivos de segurança, este código expirará em 15 minutos.</strong></p>
+            `
+        });
+
+        console.log("Email enviado com sucesso");
+        
+        return { success: true, codigo: codigo }; 
+        
+    } catch (error) {
+        console.error("Erro ao enviar o email:", error);
+        return { success: false, error: error.message };
+    }
+}

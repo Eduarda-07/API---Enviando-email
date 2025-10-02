@@ -1,28 +1,3 @@
-// const nodemailer = require("nodemailer")
-
-// let email = "eduarda.dejesussilva20@gmail.com"
-
-// let transporter = nodemailer.createTransport({
-//     host: "smtp.gmail.com",
-//     port: 465,
-//     secure: true ,
-//     auth:{
-//         user: "mesaplus.oficial@gmail.com",
-//         pass: "jtxu zchr mbzm mwup"
-//     }
-// })
-
-// transporter.sendMail({
-//     from: "Mesa Plus <mesaplus.oficial@gmail.com>",
-//     to: "eduarda.dejesussilva20@gmail.com",
-//     subject: "Recuperar senha",
-//     text: "Este é um email que não precisa ser respondido. Segue código de verificação para recuperar senha"
-// }).then(message =>{
-//     console.log(message);
-// }).catch(err => {
-//     console.log(err);
-// })
-
 
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
@@ -43,17 +18,14 @@ let transporter = nodemailer.createTransport({
         user: "mesaplus.oficial@gmail.com",
         pass: "jtxu zchr mbzm mwup"
     }
-});
+})
 
+let destinatarioEmail = "eduarda.dejesussilva@gmal.com"
 
 async function enviarEmailRecuperacao(destinatarioEmail) {
     
    
     const codigo = gerarCodigoSeguro(); 
-    
-    // ATENÇÃO: É essencial salvar este 'codigo' no seu banco de dados, 
-    // junto com um timestamp de expiração (ex: 15 minutos), para validação posterior.
-    // Ex: await salvarCodigoNoBanco(destinatarioEmail, codigo);
 
     console.log(`Gerando código seguro para: ${destinatarioEmail}`);
 
@@ -81,3 +53,5 @@ async function enviarEmailRecuperacao(destinatarioEmail) {
         return { success: false, error: error.message };
     }
 }
+
+enviarEmailRecuperacao()

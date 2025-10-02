@@ -19,7 +19,7 @@ create table tbl_usuarios(
     telefone varchar (20) not null,
     foto text null,
     data_modificacao DATETIME,
-    codigo_recuperacao text,
+    codigo_recuperacao varchar(16),
     codigo_expiracao datetime
 );
 
@@ -32,7 +32,7 @@ create table tbl_empresas(
     telefone varchar (20) not null,
     foto text null,
     data_modificacao DATETIME,
-    codigo_recuperacao text,
+    codigo_recuperacao varchar(16),
     codigo_expiracao datetime
 );
 
@@ -44,6 +44,6 @@ create table tbl_ongs (
     telefone varchar (20) not null,
     foto text null,
     data_modificacao DATETIME,
-    codigo_recuperacao text,
+    codigo_recuperacao varchar(16),
     codigo_expiracao datetime
 );

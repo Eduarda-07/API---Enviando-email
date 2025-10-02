@@ -4,9 +4,10 @@ const crypto = require("crypto");
 const { networkInterfaces } = require("os");
 
 
+const modelBanco = require("./model/DAO/recuperarSenha")
+
 function gerarCodigoSeguro() {
-   
-    return crypto.randomBytes(16).toString('hex');
+    return crypto.randomBytes(3).toString('hex')
 }
 
 
@@ -20,14 +21,22 @@ let transporter = nodemailer.createTransport({
     }
 })
 
-let destinatarioEmail = "eduarda.dejesussilva@gmal.com"
 
-async function enviarEmailRecuperacao(destinatarioEmail) {
+async function enviarEmailRecuperacao(destinatarioEmail, tipo) {
     
    
-    const codigo = gerarCodigoSeguro(); 
+    const codigo = gerarCodigoSeguro()
 
-    console.log(`Gerando código seguro para: ${destinatarioEmail}`);
+    console.log(`Gerando código seguro para: ${destinatarioEmail}`)
+
+    let resultModel = await modelBanco.guardarCodigo(destinatarioEmail,codigo, tipo)
+
+
+    if (!resultModel) {
+        console.error(`Falha ao salvar o código no banco para o email: ${destinatarioEmail}`);
+        // Retorna falha antes de tentar enviar o email
+        return { success: false, message: "Falha ao salvar o código no banco de dados." };
+    }
 
     try {
         let info = await transporter.sendMail({
@@ -54,4 +63,15 @@ async function enviarEmailRecuperacao(destinatarioEmail) {
     }
 }
 
-enviarEmailRecuperacao()
+// (async () => {
+//     const destinatarioEmail = "lhsantos198@gmail.com";
+//     const tipo = "pessoa";
+//     const resultado = await enviarEmailRecuperacao(destinatarioEmail, tipo);
+//     console.log("Resultado final da operação:", resultado);
+// })();
+
+// enviarEmailRecuperacao(destinatarioEmail)
+
+module.exports = {
+    enviarEmailRecuperacao
+};
